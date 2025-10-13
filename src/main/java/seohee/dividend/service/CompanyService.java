@@ -1,6 +1,8 @@
 package seohee.dividend.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import seohee.dividend.model.Company;
@@ -31,6 +33,10 @@ public class CompanyService {
         return this.storeCompanyAndDividend(ticker);
     }
 
+    public Page<CompanyEntity> getAllCompany(Pageable pageable) {
+        return companyRepository.findAll(pageable);
+    }
+
     private Company storeCompanyAndDividend(String ticker) {
         // ticker 를 기준으로 회사를 스크래핑
         Company company = yahooFinanceScraper.scrapCompanyByTicker(ticker);
@@ -52,6 +58,5 @@ public class CompanyService {
         dividendRepository.saveAll(dividendEntities);
         return company;
     }
-
 
 }

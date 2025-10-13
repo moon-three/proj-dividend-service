@@ -43,13 +43,10 @@ public class YahooFinanceScraper implements Scraper {
             String url = String.format(STATISTICS_URL, company.getTicker(), START_TIME, now);
             driver.get(url);
 
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-            // 모든 table 가져오기
-            List<WebElement> tables = wait.until(d -> d.findElements(By.tagName("table")));
-            // 첫 번째 table만 선택
-            WebElement table = tables.get(0);
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
             // tbody 안 tr 모두 가져오기
-            List<WebElement> trs = table.findElements(By.cssSelector("tbody tr"));
+            List<WebElement> trs = wait.until(d -> d.findElements(By.cssSelector("table.yf-1jecxey tbody tr")));
+
             // 데이터 출력
             List<Dividend> dividends = new ArrayList<>();
             for (WebElement tr : trs) {
@@ -109,7 +106,7 @@ public class YahooFinanceScraper implements Scraper {
     private WebDriver createDriver() {
         System.setProperty("webdriver.chrome.driver", chromeDriverPath);
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless");
+        options.addArguments("--headless=new");
         return new ChromeDriver(options);
     }
 
