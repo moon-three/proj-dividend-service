@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import seohee.dividend.model.Company;
+import seohee.dividend.persist.repository.CompanyRepository;
 
 @Entity(name = "COMPANY")
 @Getter
@@ -18,4 +20,9 @@ public class CompanyEntity {
     private String ticker;
 
     private String name;
+
+    public CompanyEntity(Company company) {
+        this.ticker = company.getTicker();
+        this.name = company.getName();
+    }
 }

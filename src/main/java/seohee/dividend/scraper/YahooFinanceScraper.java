@@ -7,7 +7,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import seohee.dividend.model.Company;
 import seohee.dividend.model.Dividend;
 import seohee.dividend.model.ScrapedResult;
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@Component
 public class YahooFinanceScraper implements Scraper {
 
     @Value("${chrome.driver.path}")
@@ -98,7 +98,10 @@ public class YahooFinanceScraper implements Scraper {
                     .ticker(ticker)
                     .name(title)
                     .build();
-        } finally {
+        } catch (Exception e) {
+            return null;
+        }
+        finally {
             driver.quit();
         }
     }
