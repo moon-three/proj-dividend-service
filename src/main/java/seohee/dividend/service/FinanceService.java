@@ -2,7 +2,6 @@ package seohee.dividend.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 import seohee.dividend.model.Company;
 import seohee.dividend.model.Dividend;
 import seohee.dividend.model.ScrapedResult;
@@ -12,8 +11,6 @@ import seohee.dividend.persist.repository.CompanyRepository;
 import seohee.dividend.persist.repository.DividendRepository;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
