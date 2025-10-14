@@ -20,7 +20,8 @@ public class CompanyController {
      // 회사이름을 검색할 때 자동완성을 해주는 API
     @GetMapping("/autocomplete")
     public ResponseEntity<?> autocomplete(@RequestParam String keyword) {
-        return null;
+        var result = companyService.autocomplete(keyword);
+        return ResponseEntity.ok(result);
     }
 
     // 회사 리스트를 조회하는 API
@@ -39,6 +40,8 @@ public class CompanyController {
         }
 
         Company company = companyService.save(ticker);
+        companyService.addAutocompleteKeyword(company.getName());
+
         return ResponseEntity.ok(company);
     }
 

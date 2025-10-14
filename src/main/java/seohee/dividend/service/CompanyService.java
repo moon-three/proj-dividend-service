@@ -1,6 +1,7 @@
 package seohee.dividend.service;
 
 import lombok.AllArgsConstructor;
+import org.apache.commons.collections4.Trie;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CompanyService {
 
+    private final Trie<String, String> trie;
     private final Scraper yahooFinanceScraper;
 
     private final CompanyRepository companyRepository;
@@ -57,6 +59,24 @@ public class CompanyService {
 
         dividendRepository.saveAll(dividendEntities);
         return company;
+    }
+
+    // 자동완성 기능
+    public void addAutocompleteKeyword(String keyword) {
+        trie.put(keyword, null);
+    }
+
+    // Trie 에서 회사명을 조회하는 메소드
+    public List<String> autocomplete(String keyword) {
+        return trie.prefixMap(keyword).keySet()
+                                    .stream()
+                                    .limit(10)
+                                    .sorted()
+                                    .collect(Collectors.toList());
+    }
+
+    public void deleteAutocompleteKeyword(String keyword) {
+        trie.remove(keyword);
     }
 
 }
