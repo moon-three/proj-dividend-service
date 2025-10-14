@@ -72,7 +72,7 @@ public class YahooFinanceScraper implements Scraper {
                         .build());
             }
 
-            scrapedResult.setDividendEntities(dividends);
+            scrapedResult.setDividends(dividends);
         } finally {
             driver.quit();
         }
