@@ -3,6 +3,7 @@ package seohee.dividend.service;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.Trie;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -73,6 +74,17 @@ public class CompanyService {
                                     .limit(10)
                                     .sorted()
                                     .collect(Collectors.toList());
+    }
+
+    public List<String> getCompanyNamesByKeyword(String keyword) {
+        Pageable limit = PageRequest.of(0, 10);
+
+        Page<CompanyEntity> companyEntities =
+                companyRepository.findByNameStartingWithIgnoreCase(keyword, limit);
+
+        return companyEntities.stream()
+                            .map(CompanyEntity::getName)
+                             .collect(Collectors.toList());
     }
 
     public void deleteAutocompleteKeyword(String keyword) {
