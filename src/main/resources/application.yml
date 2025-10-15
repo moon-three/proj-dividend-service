@@ -23,3 +23,7 @@ spring:
 chrome:
   driver:
     path: ./drivers/chromedriver.exe
+
+scheduler:
+  scrap:
+    yahoo: "0 0 0 1 * *"

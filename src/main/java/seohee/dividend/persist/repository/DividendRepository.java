@@ -11,5 +11,5 @@ import java.util.List;
 public interface DividendRepository extends JpaRepository<DividendEntity, Long> {
     List<DividendEntity> findAllByCompanyId(Long companyId);
 
-    boolean existByCompanyIdAndDate(Long companyId, LocalDateTime date);
+    boolean existsByCompanyIdAndDate(Long companyId, LocalDateTime date);
 }

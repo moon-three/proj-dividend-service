@@ -24,14 +24,15 @@ public class ScraperScheduler {
     private final YahooFinanceScraper yahooFinanceScraper;
 
     // 일정 주기마다 수행
-    @Scheduled(cron = "0 0 0 1 * *")
+    @Scheduled(cron = "${scheduler.scrap.yahoo}")
     public void yahooFinanceScheduling() {
         // 저장된 회사 목록을 조회
+        log.info("scraping scheduler is started");
         List<CompanyEntity> companyEntities = companyRepository.findAll();
 
         // 회사를 순회하며 배당금 정보를 새로 스크래핑
         for(var companyEntity : companyEntities) {
-            log.info("scraping schedular is started -> {}", companyEntity.getName());
+            log.info("scraping scheduler is started -> {}", companyEntity.getName());
             ScrapedResult scrapedResult = yahooFinanceScraper.scrap(Company.builder()
                                             .name(companyEntity.getName())
                                             .ticker(companyEntity.getTicker())
@@ -43,7 +44,7 @@ public class ScraperScheduler {
                     .map(e -> new DividendEntity(companyEntity.getId(), e))
                     // element를 하나씩 dividend 테이블에 삽입
                     .forEach(e -> {
-                        boolean exists = dividendRepository.existByCompanyIdAndDate(
+                        boolean exists = dividendRepository.existsByCompanyIdAndDate(
                                 e.getCompanyId(), e.getDate());
 
                         if(!exists) {
