@@ -1,4 +1,4 @@
-package seohee.dividend.model.constant;
+package seohee.dividend.model.constants;
 
 public enum Month {
 

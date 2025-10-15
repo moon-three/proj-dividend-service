@@ -2,10 +2,12 @@ package seohee.dividend.scheduler;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import seohee.dividend.model.Company;
 import seohee.dividend.model.ScrapedResult;
+import seohee.dividend.model.constants.CacheKey;
 import seohee.dividend.persist.entity.CompanyEntity;
 import seohee.dividend.persist.entity.DividendEntity;
 import seohee.dividend.persist.repository.CompanyRepository;
@@ -24,6 +26,7 @@ public class ScraperScheduler {
     private final YahooFinanceScraper yahooFinanceScraper;
 
     // 일정 주기마다 수행
+    @CacheEvict(value = CacheKey.KEY_FINANCE, allEntries = true)   // 스케줄러 동작 시 캐시 비움
     @Scheduled(cron = "${scheduler.scrap.yahoo}")
     public void yahooFinanceScheduling() {
         // 저장된 회사 목록을 조회
@@ -61,5 +64,4 @@ public class ScraperScheduler {
         }
 
     }
-
 }

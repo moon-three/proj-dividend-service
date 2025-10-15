@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import seohee.dividend.model.Company;
 import seohee.dividend.model.Dividend;
 import seohee.dividend.model.ScrapedResult;
-import seohee.dividend.model.constant.Month;
+import seohee.dividend.model.constants.Month;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
