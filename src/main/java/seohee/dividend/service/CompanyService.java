@@ -76,6 +76,7 @@ public class CompanyService {
                                     .collect(Collectors.toList());
     }
 
+    // DB 를 이용한 자동완성 기능
     public List<String> getCompanyNamesByKeyword(String keyword) {
         Pageable limit = PageRequest.of(0, 10);
 
@@ -91,4 +92,15 @@ public class CompanyService {
         trie.remove(keyword);
     }
 
+    public String deleteCompany(String ticker) {
+        var company = companyRepository.findByTicker(ticker)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 회사입니다."));
+
+        dividendRepository.deleteAllByCompanyId(company.getId());
+        companyRepository.delete(company);
+
+        // trie 에 저장된 데이터 삭제
+        deleteAutocompleteKeyword(company.getName());
+        return company.getName();
+    }
 }

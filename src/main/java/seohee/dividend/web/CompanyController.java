@@ -1,6 +1,8 @@
 package seohee.dividend.web;
 
 import lombok.AllArgsConstructor;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import seohee.dividend.model.Company;
+import seohee.dividend.model.constants.CacheKey;
 import seohee.dividend.persist.entity.CompanyEntity;
 import seohee.dividend.service.CompanyService;
 
@@ -17,6 +20,7 @@ import seohee.dividend.service.CompanyService;
 public class CompanyController {
 
     private final CompanyService companyService;
+    private final CacheManager redisCacheManger;
 
      // 회사이름을 검색할 때 자동완성을 해주는 API
     @GetMapping("/autocomplete")
@@ -50,8 +54,19 @@ public class CompanyController {
     }
 
     // 회사 데이터 삭제
-    @DeleteMapping("/company")
-    public ResponseEntity<?> deleteCompany() {
-        return null;
+    @DeleteMapping("/{ticker}")
+    @PreAuthorize("hasRole('WRITE')")
+    public ResponseEntity<?> deleteCompany(@PathVariable String ticker) {
+        String companyName = companyService.deleteCompany(ticker);
+
+        // 캐시에서 회사 데이터 삭제
+        clearFinanceCache(companyName);
+        return ResponseEntity.ok(companyName);
     }
+
+    public void clearFinanceCache(String companyName) {
+        Cache cache = redisCacheManger.getCache(CacheKey.KEY_FINANCE);
+        if (cache != null) { cache.evict(companyName); }
+    }
+
 }
