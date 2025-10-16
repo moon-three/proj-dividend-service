@@ -5,9 +5,14 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import seohee.dividend.service.MemberService;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -19,11 +24,14 @@ public class TokenProvider {
     private static final String KEY_ROLES = "roles";
     private static final long TOKEN_EXPIRE_TIME = 1000 * 60 * 60;   // 1 hour
 
+    private final MemberService memberService;
+
     private final SecretKey key;
 
-    public TokenProvider(@Value("${spring.jwt.secret}") String secretKey) {
+    public TokenProvider(@Value("${spring.jwt.secret}") String secretKey, MemberService memberService) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         key = Keys.hmacShaKeyFor(keyBytes);
+        this.memberService = memberService;
     }
 
     /**
@@ -45,12 +53,17 @@ public class TokenProvider {
                 .compact();                 // 최종 JWT 문자열 반환
     }
 
+    public Authentication getAuthentication(String jwt) {
+        UserDetails userDetails = memberService.loadUserByUsername(getUsername(jwt));
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+    }
+
     public String getUsername(String token) {
         return parseClaims(token).getSubject();
     }
 
     public boolean validateToken(String token) {
-        if(!StringUtils.hasText(token)) {
+        if (!StringUtils.hasText(token)) {
             return false;
         }
         var claims = parseClaims(token);

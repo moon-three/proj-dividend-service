@@ -31,14 +31,19 @@ public class MemberService implements UserDetailsService {
         if(exists) {
             throw new RuntimeException("이미 사용 중인 아이디입니다.");
         }
-
         member.setPassword(passwordEncoder.encode(member.getPassword()));
-        var result = memberRepository.save(member.toEntity());
-        return result;
+        return memberRepository.save(member.toEntity());
     }
 
     public MemberEntity authenticate(Auth.SignIn member) {
-        return null;
+        var user = memberRepository.findByUsername(member.getUsername())
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 아이디 입니다."));
+
+        if(!passwordEncoder.matches(member.getPassword(), user.getPassword())) {
+            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+        }
+
+        return user;
     }
 
 }
