@@ -7,6 +7,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import seohee.dividend.exception.impl.AlreadyExistUserException;
+import seohee.dividend.exception.impl.NotExistUserException;
+import seohee.dividend.exception.impl.WrongPasswordException;
 import seohee.dividend.model.Auth;
 import seohee.dividend.persist.entity.MemberEntity;
 import seohee.dividend.persist.repository.MemberRepository;
@@ -29,7 +32,7 @@ public class MemberService implements UserDetailsService {
     public MemberEntity register(Auth.SignUp member) {
         boolean exists = memberRepository.existsByUsername(member.getUsername());
         if(exists) {
-            throw new RuntimeException("이미 사용 중인 아이디입니다.");
+            throw new AlreadyExistUserException();
         }
         member.setPassword(passwordEncoder.encode(member.getPassword()));
         return memberRepository.save(member.toEntity());
@@ -37,10 +40,10 @@ public class MemberService implements UserDetailsService {
 
     public MemberEntity authenticate(Auth.SignIn member) {
         var user = memberRepository.findByUsername(member.getUsername())
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 아이디 입니다."));
+                .orElseThrow(() -> new NotExistUserException());
 
         if(!passwordEncoder.matches(member.getPassword(), user.getPassword())) {
-            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+            throw new WrongPasswordException();
         }
 
         return user;
