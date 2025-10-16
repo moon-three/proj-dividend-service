@@ -24,6 +24,9 @@ spring:
     host: localhost
     port: 6379
 
+  jwt:
+    secret: c3ByaW5nLWJvb3QtZGl2aWRlbmQtcHJvamVjdC1qd3Qtc2VjcmV0LWtleQ==
+
 chrome:
   driver:
     path: ./drivers/chromedriver.exe
