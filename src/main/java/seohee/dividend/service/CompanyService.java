@@ -1,6 +1,7 @@
 package seohee.dividend.service;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.Trie;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +20,7 @@ import seohee.dividend.scraper.Scraper;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class CompanyService {
@@ -60,6 +62,7 @@ public class CompanyService {
                 .collect(Collectors.toList());
 
         dividendRepository.saveAll(dividendEntities);
+        log.info("save dividend -> {}", company.getName());
         return company;
     }
 
@@ -99,7 +102,7 @@ public class CompanyService {
 
         dividendRepository.deleteAllByCompanyId(company.getId());
         companyRepository.delete(company);
-
+        log.info("delete company & dividend -> {}", company.getName());
         // trie 에 저장된 데이터 삭제
         deleteAutocompleteKeyword(company.getName());
         return company.getName();

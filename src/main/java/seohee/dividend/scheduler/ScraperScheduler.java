@@ -30,7 +30,6 @@ public class ScraperScheduler {
     @Scheduled(cron = "${scheduler.scrap.yahoo}")
     public void yahooFinanceScheduling() {
         // 저장된 회사 목록을 조회
-        log.info("scraping scheduler is started");
         List<CompanyEntity> companyEntities = companyRepository.findAll();
 
         // 회사를 순회하며 배당금 정보를 새로 스크래핑
@@ -52,6 +51,7 @@ public class ScraperScheduler {
 
                         if(!exists) {
                             dividendRepository.save(e);
+                            log.info("insert new dividend -> {}", e.toString());
                         }
                     });
 
